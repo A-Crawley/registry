@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom';
 import { Button, Paper, ThemeProvider, createTheme, Container, CssBaseline, Card, Box, CardMedia, ButtonGroup, Typography, CardContent } from '@mui/material';
 import MediaCard from './card.js'
 import Item from './Item.js';
-import { AttachMoney, ArrowUpward, ArrowDownward, SettingsInputAntennaTwoTone } from '@mui/icons-material'
+import { AttachMoney, ArrowUpward, ArrowDownward } from '@mui/icons-material'
 import { supabase } from './supabaseClient.js'
+import Auth from './auth.js'
 
 let theme = createTheme();
 
@@ -46,6 +47,7 @@ function List({ items, priceOrder, showPurchased, sortPrice, showPurchasedFunc }
                 <Button variant='contained' onClick={() => {showPurchasedFunc()}}>
                     {showPurchased === true ? 'Hide' : 'Show'}&nbsp;Purchased
                 </Button>
+                <Button variant='contained' onClick={() => {supabase.auth.signOut()}}>Logout</Button>
             </ButtonGroup>
             {items?.map((item) => (
                     <Box key={item.id} sx={{margin: '20px', display: showPurchased === true ? '' : item.purchased === true ? 'none' : ''}}>
@@ -56,11 +58,11 @@ function List({ items, priceOrder, showPurchased, sortPrice, showPurchasedFunc }
         );
     } else {
         return (
-            <Card sx={{ maxWidth: 'lg', height: '100vh' }}>
+            <Card sx={{ maxWidth: 'lg', height: '100vh' }} elevation={0}>
                 <CardMedia
                     component="img"
                     height="400px"
-                    image="/static/images/cards/contemplative-reptile.jpg"
+                    image="https://drive.google.com/uc?id=1pdRKZ3VzxBmVoc6c79apRbuL0mrbe-2J"
                     alt="green iguana"
                 />
                 <CardContent sx={{textAlign: 'center'}}>
@@ -81,8 +83,16 @@ function App() {
     const [items, setItems] = useState([]);
     const [priceOrder, setPriceOrder] = useState(true);
     const [showPurchased, setShowPurchased] = useState(false);
+    const [session, setSession] = useState(null)
 
     useEffect(() => {
+
+        setSession(supabase.auth.session())
+
+        supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session)
+        });
+
         fetch().then(result => {
             setItems(result);
         });
@@ -128,9 +138,10 @@ function App() {
             <ThemeProvider theme={theme}>
                 <MainContainer>
                     <CssBaseline />
+                    {!session ? <Auth /> :
                     <Paper elevation={0} sx={{width: '100%', height:'100%' }}>
                         <List items={items} priceOrder={priceOrder} showPurchased={showPurchased} sortPrice={sortPrice} showPurchasedFunc={showPurchasedFunc}/>
-                    </Paper>
+                    </Paper>}
                 </MainContainer>
             </ThemeProvider>
     );

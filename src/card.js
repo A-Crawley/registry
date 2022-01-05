@@ -30,8 +30,16 @@ export default class MediaCard extends React.Component{
     getHeight() {return isMobile ? "140" : "300"} 
     
     buy(){
-        supabase.from('wedding_reg').update({purchased: true}).eq('id', this.state.item.id).then(() => {
+        supabase.from('wedding_reg')
+        .update({
+            purchased: true, 
+            updated_date: (new Date()).toISOString().substring(0,10), 
+            updated_time: (new Date()).toISOString().substring(11)
+        }, {returning: 'minimal'})
+        .eq('id', this.state.item.id)
+        .then((d) => {
             this.setState();
+            console.log(d)
         });
     }
 
