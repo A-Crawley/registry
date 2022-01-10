@@ -2,10 +2,34 @@ import { supabase } from './supabaseClient'
 import { Button, ThemeProvider, createTheme, Container, CssBaseline, Box, Typography, TextField, Avatar } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-const theme = createTheme();
+let theme = createTheme({
+  palette: {
+      type: 'light',
+      primary: {
+          main: '#afb38c',
+      },
+      secondary: {
+          main: '#b35f1f',
+      },
+      background: {
+          default: '#faf5e9',
+      },
+      text: {
+          primary: '#98360b',
+          secondary: '#283618',
+      },
+  }, 
+  typography: {
+      fontFamily: [
+          'Prata'
+      ]
+  }
+});
+
+const email = "crawleyandrew3@gmail.com";
 
 export default function Auth() {
-  const email = "crawleyandrew3@gmail.com"
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
